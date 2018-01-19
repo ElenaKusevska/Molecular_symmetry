@@ -222,7 +222,7 @@ real(dp), intent(out) :: average_deviation ! deviation from perfect symmetry
 !
 allocate (comparison(n), B(n), BB(n), dist(n))
 !========================================================
-!----IMPORTANT:------------------------------------------
+!----NOTE TO SELF:---------------------------------------
 allocate (coordinates(3,n), coordinates1(3,n)) 
 !coordinates arrays are probably not necessary here.
 !Either that, or do the comparison on them, rather than
