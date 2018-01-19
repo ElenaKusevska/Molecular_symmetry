@@ -49,10 +49,6 @@ character :: jobz, uplo !for lapack dysyev routine
 real(dp), allocatable, dimension(:,:) :: work !for lapack routine
 real(dp) :: lwork1 !because the output for lwork is a real number
 real(dp), dimension(3,1) :: eigenv1, eigenv2, eigenv3 !eigenvectors
-character(len=50) :: workstring !for converting the numerical value
-                                  !of the variable work(1,1) to
-                                  !a string, for neater printing
-character(len=25) :: infostring ! same as workstring, but for info
 !
 !----------------------------------------------------------------
 !For the determination of the symmetry of the entire molecule:
@@ -70,8 +66,8 @@ integer, dimension(3) :: rot_order !vector that contains the maximum
                                 !principal moments of inertia
 integer :: order ! order of rotations
 integer :: main_direction !main rotation order
-reaL(dp) :: stdv !standard deviation
-real(dp), dimension(3) :: standard_dev_array
+reaL(dp) :: symdev !average deviation from perfect symmetry
+real(dp), dimension(3) :: symmetry_dev_array
 character(len=26) :: horisontal1, vertical1, rotation1, rotation2, rotoinv
 character(len=26) :: inversion1
 !
@@ -80,18 +76,32 @@ character(len=26) :: inversion1
 !-----------------------------
 !
 real(dp), allocatable, dimension(:,:) :: distance_matrix
-!character, allocatable, dimension(:,:) :: dmatrix
 real(dp), dimension(3,1) :: SEA1, SEA2, midpoint, SEA11, SEA21, midpoint1
 real(dp), allocatable, dimension(:) :: D1, D2 !columns of distance matrix
 integer, allocatable, dimension(:) :: C, D, T, AA !working f-tions
 integer :: prod1 !comparison
 !
+!------------------------------------------------
+!For converting integers and doubles to strings:
+!------------------------------------------------
+!
+character(len=50) :: doublestring
+character(len=25) :: intstring
+!
+!-------------------------
 !Cpu_time:
+!-------------------------
 !
 real(dp) :: start, finish, cputime
 !
+!------------------------------
+!Program starts here:
+!------------------------------
+!
 call CPU_time(start)
 !
+!Some variables for printing the name of the
+!symmetry element in question:
 horisontal1 = 'horisontal reflection plane'
 vertical1 = 'vertical reflection plane'
 rotation1 = 'secondary rotation axis'
@@ -108,9 +118,9 @@ rotoinv = 'improper rotation axis'
 !
 call periodic (atoms, masses)
 !
-!------------------------
-!!open output file:
-!------------------------
+!----------------------------
+!Open input/output files:
+!----------------------------
 !
 open (unit=3, file='input', status='old', action='read')
 open (unit=2, file='output', status='new', action='write')
@@ -120,6 +130,10 @@ open (unit=2, file='output', status='new', action='write')
 !--------------------------------------------------------------
 !
 read(3,*) m
+if (m == 1) then
+    write(*,*) 'this is just one atom.'
+    stop
+end if
 read(3,'(A20)') title
 !
 allocate (labels(m))
@@ -132,29 +146,12 @@ do i = 1, m
     read(3,*) labels(i), x(i), y(i), z(i)
 end do
 !
-write(2,*) 'input geometry for' 
-write(2,*) trim(title) //  ':'
-write(2,*) '--------------------------------------'
+write(2,*) 'input geometry for ' // trim(title) //  ':'
+write(2,*) '-----------------------------------------------'
 do i = 1, m
     write(2,*) labels(i), x(i), y(i), z(i)
 end do
 write(2,*)
-!
-!--------------------------------
-!If the molecule is a diatiomic:
-!--------------------------------
-!
-if (m==2) then
-    if ( labels(1) == labels(2)) then
-        write(2,*) 'the point group is Dh-inf'
-        call CPU (Start)
-        stop
-    else if ( labels(1) /= labels(2)) then
-        write(2,*) 'the point group is Cv-inf'
-        call CPU (start)
-        stop
-    end if
-end if
 !
 !-------------------------------------
 !Assigning the masses:
@@ -287,9 +284,9 @@ lwork = -1
 allocate (work(1,3))
 !
     call DSYEV(jobz, uplo, n, inert, lda, w, work, lwork, info)
-    write(infostring,*)info
-    write(workstring,*) work(1,1)
-    write(2,*) 'info: ' // adjustl(trim(infostring)), ' lwork1: ' // adjustl(trim(workstring))
+    write(intstring,*)info
+    write(doublestring,*) work(1,1)
+    write(2,*) 'info: ' // adjustl(trim(intstring)), ' lwork1: ' // adjustl(trim(doublestring))
     lwork = int(work(1,1))
 !
 deallocate (work)
@@ -321,23 +318,7 @@ write(2,*) 'eigenvector 3:', eigenv3
 write(2,*)
 !
 !----------------------------
-!cubic groups:
-!----------------------------
-!
-if (dabs(w(1) - w(2)) .le. 0.5) then
-    if (dabs(w(2) - w(3)) .le. 0.5) then
-        if (dabs(w(1) - w(3)) .le. 0.5) then
-            write (2,*) 'the molecule belongs to one of &
-            the point groups with higher order (cubic) symmetry' 
-            write (2,*)
-            call CPU (start)
-            Stop
-        end if
-    end if
-end if
-!
-!----------------------------
-!create molecule matrix:
+!Create molecule matrix:
 !----------------------------
 !
 !the n - columns of this matrix represent the n - atoms
@@ -351,15 +332,70 @@ do i = 1, m
     molecule(4,i) = z(i) !row 4 contains the z - coordinates
 end do
 !
-!---------------------
+!-------------------------------
+!Print distance matrix:
+!-------------------------------
+!
+allocate (distance_matrix(m,m))
+!
+do i = 1, m
+    do j = 1, m
+        distance_matrix(i,j) = sqrt( (molecule(2,i)-molecule(2,j))**(2) + &
+            (molecule(3,i)-molecule(3,j))**(2) + &
+            (molecule(4,i)-molecule(4,j))**(2) )
+    end do
+end do
+!
+write(2,*)'Distance matrix:'
+write(2,*)'----------------------------------------'
+write(2,'(A7,20A7)') 'DM', (labels(i), i = 1, m)
+!
+do i = 1, m
+        write(2,'(A7,20F7.3)') labels(i), (distance_matrix(i,j), j=1,m)
+end do
+write(2,*)
+!
+!----------------------------
+!cubic groups:
+!----------------------------
+!
+if (dabs(w(1) - w(2)) .le. 0.1) then
+    if (dabs(w(2) - w(3)) .le. 0.1) then
+        if (dabs(w(1) - w(3)) .le. 0.1) then
+            write (2,*) 'the molecule belongs to one of &
+            the point groups with higher order (cubic) symmetry' 
+            write (2,*)
+            call CPU (start)
+            Stop
+        end if
+    end if
+end if
+!
+!--------------------------------
+!If the molecule is a diatiomic:
+!--------------------------------
+!
+if (m==2) then
+    if ( labels(1) == labels(2)) then
+        write(2,*) 'the point group is Dh-inf'
+        call CPU (Start)
+        stop
+    else if ( labels(1) /= labels(2)) then
+        write(2,*) 'the point group is Cv-inf'
+        call CPU (start)
+        stop
+    end if
+end if
+!
+!-----------------------
 !for linear molecules:
-!---------------------
+!-----------------------
 !
 If ( (w(1) .le. 0.01) .or. (w(2) .le. 0.01) .or. (w(3) .le. 0.01) ) then
-    call inversion (molecule, m, test, stdv)
+    call inversion (molecule, m, test, symdev)
     if (test == 1) then
         write(2,*) 'the point group of the molecule is: D-inf-h'
-        call standard_dev (stdv, inversion1)
+        call average_dev (symdev, inversion1)
     else if (test /= 1) then
         write(2,*) 'the point group of the molecule is C-inf-v'
     end if
@@ -383,10 +419,10 @@ do i = 6, 1, -1
     r = i
     rot_order(1) = i
     call rotation(mola, m, r, molb)
-    call compare(mola, molb, m, test, stdv)
+    call compare(mola, molb, m, test, symdev)
     if (test == 1) exit !the maximum rotation order is recorded in
                         !the array rot_order
-    standard_dev_array(1) = stdv
+    symmetry_dev_array(1) = symdev
 end do
 !
 call align(eigenv2, molecule, m, vec1, mola)
@@ -395,9 +431,9 @@ do i = 6, 1, -1
     r = i
     rot_order(2) = i
     call rotation(mola, m, r, molb)
-    call compare(mola, molb, m, test, stdv)
+    call compare(mola, molb, m, test, symdev)
     if (test == 1) exit
-    standard_dev_array(2) = stdv
+    symmetry_dev_array(2) = symdev
 end do
 !
 call align(eigenv3, molecule, m, vec1, mola)
@@ -406,12 +442,15 @@ do i = 6, 1, -1
     r = i
     rot_order(3) = i
     call rotation(mola, m, r, molb)
-    call compare(mola, molb, m, test, stdv)
+    call compare(mola, molb, m, test, symdev)
     if (test == 1) exit
-    standard_dev_array(3) = stdv
+    symmetry_dev_array(3) = symdev
 end do
 !
 order = maxval(rot_order)
+write(doublestring,*) order
+write(2,*) 'the order of the main rotation axis is: ' // &
+   adjustl(trim(doublestring))
 !
 !-----------------------------------------------
 !in case there is no rotational symmetry:
@@ -420,35 +459,35 @@ order = maxval(rot_order)
 !search for a horisontal plane:
 if (order == 1) then
     call align(eigenv1, molecule, m, vec1, mola)
-    call horisontal (mola, m, test, stdv)
+    call horisontal (mola, m, test, symdev)
     if (test == 1) then 
         write(2,*) 'the molecule belongs to the point group: Cs'
-        call standard_dev (stdv, horisontal1)
+        call average_dev (symdev, horisontal1)
         call CPU (start)
         stop
     else if (test == 0) then
         call align (eigenv2, molecule, m, vec1, mola)
-        call horisontal (mola, m, test, stdv)
+        call horisontal (mola, m, test, symdev)
         if (test == 1) then
             write(2,*) 'the molecule belongs to the point group: Cs'
-            call standard_dev (stdv, horisontal1)
+            call average_dev (symdev, horisontal1)
             call CPU (start)
             stop
         else if(test == 0) then
             call align(eigenv3, molecule, m, vec1, mola)
-            call horisontal (mola, m, test, stdv)
+            call horisontal (mola, m, test, symdev)
             if (test == 1) then
                 write(2,*) 'the molecule belongs to the point group: Cs'
-                call standard_dev (stdv, horisontal1)
+                call average_dev (symdev, horisontal1)
                 call CPU (start)
                 stop
             else if (test == 0) then 
                 !if there is no horisontal reflection plane, search for
                         !an inversion center:
-                call inversion (molecule, m, test, stdv)
+                call inversion (molecule, m, test, symdev)
                 if (test == 1) then
                     write(2,*) 'the molecule belongs to the point group: Ci'
-                    call standard_dev (stdv, inversion1)
+                    call average_dev (symdev, inversion1)
                     call CPU (start)
                     stop
                     if (test == 0) then
@@ -468,8 +507,6 @@ end if
 !main axis of rotation.
 !---------------------------------------------------------------
 !
-write(2,*) 'the order of the main rotation axis is:', order
-!
 main_direction=maxloc(rot_order,1)!column of the inertia eigenvectors matrix
             !that corresponds to the main rotation axis. i.e. eigenvector
             !of the inertia matrix that corresponds to the main rotation
@@ -481,31 +518,25 @@ do i = 1, 3
         !corresponding to it
 end do
 !
-stdv = standard_dev_array(main_direction) 
-call standard_dev (stdv, rotation2)
+symdev = symmetry_dev_array(main_direction) 
+call average_dev (symdev, rotation2)
+write(2,*)
 !
-!-------------------------------------------------------------------
-!Build distance matrix in order to find two symetrically equivalent atoms
-!-------------------------------------------------------------
+!------------------------------------------------------------------
+!Recompute distance matrix (just in case. Not sure if necessary. 
+!Probably not, because if you look at the routines, the order of
+!the atoms is never changed) in order to find two symetrically 
+!equivalent atoms:
+!------------------------------------------------------------------
 !
 call align(main_axis, molecule, m, vec1, mola) !From now on the molecule 
                                     !will be aligned with the z-axis
-!
-allocate (distance_matrix(m,m))
 !
 do i = 1, m
     do j = 1, m
         distance_matrix(i,j) = sqrt( (mola(2,i)-mola(2,j))**(2.) + &
             (mola(3,i)-mola(3,j))**(2.) + (mola(4,i)-mola(4,j))**(2.) )
     end do
-end do
-!
-write(2,*)'Distance matrix:'
-write(2,*)'----------------------------------------'
-write(2,'(A7,20A7)') 'DM', (labels(i), i = 1, m)
-!
-do i = 1, m
-        write(2,'(A7,20F7.3)') labels(i), (distance_matrix(i,j), j=1,m)
 end do
 !
 !-----------------------------------------
@@ -598,13 +629,14 @@ determine_SEA: do i = 1, m
     end do
 end do determine_SEA
 !
-write(2,*) 'refference points'
+write(2,*) 'Refference points:'
 write(2,*) '--------------------------'
 write(2,*) 'symmetrically equivalent atoms:'
 write(2,*) SEA1
 write(2,*) SEA2
-write(2,*) 'midpoint between the two symmetrically equivalent atoms:', &
-    midpoint1
+write(2,*) 'midpoint between the two symmetrically equivalent atoms:'
+write(2,*) midpoint1
+write(2,*) 
 !
 !---------------------------------------------------------------------
 !when it is certain that the point group must be cyclic because we haven't
@@ -614,40 +646,40 @@ write(2,*) 'midpoint between the two symmetrically equivalent atoms:', &
 if (midpoint1(1,1) == 0) then         
     if (midpoint1(2,1) == 0) then    
         if (midpoint1(3,1) == 0) then 
-            call horisontal(mola, m, test, stdv)
+            call horisontal(mola, m, test, symdev)
             if (test == 1) then
                 write(2,*) 'The symmetry group of the molecule is C', &
                     order, 'h'
-                call standard_dev (stdv, horisontal1)
+                call average_dev (symdev, horisontal1)
                 call CPU(start)
                 stop
             else if (test == 0) then
-                call vertical(mola, midpoint, m, test, stdv)
+                call vertical(mola, midpoint, m, test, symdev)
                 if (test == 1) then
                     write(2,*) 'The symmetry group is C', order, 'v'
-                    call standard_dev (stdv, vertical1)
+                    call average_dev (symdev, vertical1)
                     call CPU (start)
                     stop
                 else if (test == 0) then
-                    call vertical(mola, SEA1, m, test, stdv)
+                    call vertical(mola, SEA1, m, test, symdev)
                     if (test == 1) then
                         write(2,*) 'The symmetry group is C', order, 'v'
-                        call standard_dev (stdv, vertical1)
+                        call average_dev (symdev, vertical1)
                         call CPU (start)
                         stop
                     else if (test == 0) then
-                        call vertical(mola, SEA2, m, test, stdv)
+                        call vertical(mola, SEA2, m, test, symdev)
                         if (test == 1) then
                             write(2,*) 'The symmetry group is C', order, 'v'
-                            call standard_dev (stdv, vertical1)
+                            call average_dev (symdev, vertical1)
                             call CPU (start)
                             stop
                         else if (test == 0) then
                             rr = 2*order
-                            call rotoinversion (mola, m, rr, test, stdv)
+                            call rotoinversion (mola, m, rr, test, symdev)
                             if (test == 1) then
                                 write(2,*) 'the symmettry group is S', rr
-                                call standard_dev (stdv, rotoinv)
+                                call average_dev (symdev, rotoinv)
                                 call CPU (start)
                             else if (test == 0) then
                                 write(2,*) 'The symmetry group is C', order
@@ -667,23 +699,23 @@ end if
 !dihedral:
 !-------------------------------------------
 !
-call secondary_rotation(mola, SEA11, m, test, stdv)
+call secondary_rotation(mola, SEA11, m, test, symdev)
 if (test == 1) then
     write(2,*) 'the molecule has a secondary rotation axis.'
-    call standard_dev (stdv, rotation1)
-    call horisontal(mola, m, test, stdv)
+    call average_dev (symdev, rotation1)
+    call horisontal(mola, m, test, symdev)
     if (test == 1) then
         write(2,*) 'The symmetry group of the molecule is D', order, 'h'
         write(2,*) 'for the horisontal reflection plane:'
-        call standard_dev (stdv, horisontal1)
+        call average_dev (symdev, horisontal1)
         call CPU (start)
         stop
     else if (test == 0) then
-        call vertical(mola, midpoint1, m, test, stdv)
+        call vertical(mola, midpoint1, m, test, symdev)
         if (test == 1) then
             write(2,*) 'The symmetry group is D', order, 'd'
             write(2,*) 'for the vertical reflection plane:'
-            call standard_dev (stdv, vertical1)
+            call average_dev (symdev, vertical1)
             call CPU(start)
             stop
         else if (test == 0) then
@@ -693,28 +725,28 @@ if (test == 1) then
         end if
     end if
 else if (test == 0) then
-    call secondary_rotation(mola, midpoint1, m, test, stdv)
+    call secondary_rotation(mola, midpoint1, m, test, symdev)
     write(2,*) 'the molecule has a secondary rotation axis.'
-    call standard_dev (stdv, rotation1)
+    call average_dev (symdev, rotation1)
     if (test == 1) then
-        call horisontal(mola, m, test, stdv)
+        call horisontal(mola, m, test, symdev)
         if (test == 1) then
             write(2,*) 'The symmetry group of the molecule is D', order, 'h'
-            call standard_dev (stdv, horisontal1)
+            call average_dev (symdev, horisontal1)
             call CPU (start)
             stop
         else if (test == 0) then
-            call vertical(mola, SEA11, m, test, stdv)
+            call vertical(mola, SEA11, m, test, symdev)
             if (test == 1) then
                 write(2,*) 'The symmetry group is D', order, 'd'
-                call standard_dev (stdv, vertical1)
+                call average_dev (symdev, vertical1)
                 call CPU (start)
                 stop
             else if (test == 0) then
-                call vertical(mola, SEA2, m, test, stdv)
+                call vertical(mola, SEA2, m, test, symdev)
                 if (test == 1) then
                     write(2,*) 'The symmetry group is D', order, 'd'
-                    call standard_dev (stdv, vertical1)
+                    call average_dev (symdev, vertical1)
                     call CPU (start)
                     stop
                 else if (test == 0) then
@@ -725,35 +757,35 @@ else if (test == 0) then
             end if
         end if
     else if (test == 0) then
-      call horisontal(mola, m, test, stdv)
+      call horisontal(mola, m, test, symdev)
          if (test == 1) then
              write(2,*) 'The symmetry group of the molecule is C', &
                  order, 'h'
-             call standard_dev (stdv, horisontal1)
+             call average_dev (symdev, horisontal1)
              call CPU (start)
              stop
          else if (test == 0) then
-            call vertical(mola, midpoint, m, test, stdv)
+            call vertical(mola, midpoint, m, test, symdev)
             if (test == 1) then
                 write(2,*) 'The symmetry group is C', order, 'v'
-                call standard_dev (stdv, vertical1)
+                call average_dev (symdev, vertical1)
                 call CPU (start)
             else if (test == 0) then
-                call vertical(mola, SEA1, m, test, stdv)
+                call vertical(mola, SEA1, m, test, symdev)
                 if (test == 1) then
                     write(2,*) 'The symmetry group is C', order, 'v'
-                    call standard_dev (stdv, vertical1)
+                    call average_dev (symdev, vertical1)
                     call CPU (start)
                 else if (test == 0) then
-                    call vertical(mola, SEA2, m, test, stdv)
+                    call vertical(mola, SEA2, m, test, symdev)
                     if (test == 1) then
                         write(2,*) 'The symmetry group is C', order, 'v'
-                        call standard_dev (stdv, vertical1)
+                        call average_dev (symdev, vertical1)
                         call CPU (start)
                         stop
                     else if (test == 0) then
                         rr = 2*order
-                        call rotoinversion (mola, m, rr, test, stdv)
+                        call rotoinversion (mola, m, rr, test, symdev)
                         if (test == 1) then 
                             write(2,*) 'The symmetry group is S', rr
                             call CPU (start)
@@ -769,6 +801,5 @@ else if (test == 0) then
          end if
      end if
  end if
-
 
 end program symmetry

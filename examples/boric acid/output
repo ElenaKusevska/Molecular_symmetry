@@ -1,0 +1,44 @@
+ input geometry for
+ boric_acid          :
+ --------------------------------------
+ B    -1.1594203199999999       0.24637681000000000        0.0000000000000000     
+ O    -2.5655370400000002      -0.14409564000000000       0.49190145000000002     
+ H    -2.5524152500000001      -0.25388029000000001        1.4455130800000000     
+ O   -0.90692242999999995       0.48366339000000003       -1.5005132100000000     
+ H    -1.7228042400000001       0.34859660999999997       -1.9880517600000001     
+ O   -5.80149000000000029E-003  0.39956268000000000        1.0086117600000000     
+ H    0.79695853000000005       0.64441411000000004       0.54253868000000005     
+ info:           0 lwork1:   102.00000000000000     
+ eigenvalues of the inertia tensor:   63.386503805827580        63.386503846956344        126.77300765278389     
+ info           0
+ eigenvectors of the inertia tensor:
+ ---------------------------------------
+ eigenvector 1:  0.87361503895512005       0.25544999169122728      -0.41417636998795071     
+ eigenvector 2:  0.42966429800687567      -5.36785676738596798E-003  0.90297274440150377     
+ eigenvector 3: -0.22844114062423768       0.96680736853764038       0.11444718175481877     
+ the order of the main rotation axis is:           3
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ main rotation axis        :  1.16773050747201703E-007
+ Distance matrix:
+ ----------------------------------------
+     DM    B      O      H      O      H      O      H  
+    B    0.000  1.540  2.069  1.540  2.069  1.540  2.069
+    O    1.540  0.000  0.960  2.667  2.665  2.667  3.454
+    H    2.069  0.960  0.000  3.454  3.583  2.665  3.583
+    O    1.540  2.667  3.454  0.000  0.960  2.667  2.665
+    H    2.069  2.665  3.583  0.960  0.000  3.454  3.583
+    O    1.540  2.667  2.665  2.667  3.454  0.000  0.960
+    H    2.069  3.454  3.583  2.665  3.583  0.960  0.000
+ refference points
+ --------------------------
+ symmetrically equivalent atoms:
+  -1.4443074949197814      -0.53439298377056721       1.50275514254616382E-010
+  0.25935584847100546        1.5180034725753881      -6.80935585695152668E-011
+ midpoint between the two symmetrically equivalent atoms: -0.59247582322438797       0.49180524440241047       4.10909778425505579E-011
+ the molecule has a secondary rotation axis.
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ secondary rotation axis   :  1.16773050747201703E-007
+ The symmetry group of the molecule is C           3 h
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ horisontal reflection plan:   0.0000000000000000     
+ CPU_TIME:   0.0000000000000000     

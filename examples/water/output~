@@ -1,0 +1,30 @@
+ input geometry forwater               :
+ --------------------------------------
+ O   -0.14450867000000001      -0.37572253999999999        0.0000000000000000     
+ H    0.81549132999999996      -0.37572253999999999        0.0000000000000000     
+ H   -0.46496325999999999       0.52921328999999995        0.0000000000000000     
+ info:           0 lwork1:   102.00000000000000     
+ eigenvalues of the inertia tensor:  0.54961898868198655        1.2390703179177580        1.7886893065997445     
+ info           0
+ eigenvectors of the inertia tensor:
+ ---------------------------------------
+ eigenvector 1: -0.81664155651071513       0.57714518812839144        0.0000000000000000     
+ eigenvector 2:  0.57714518812839144       0.81664155651071513        0.0000000000000000     
+ eigenvector 3:   0.0000000000000000        0.0000000000000000        1.0000000000000000     
+ the order of the main rotation axis is:           2
+              standard deviation of the atomic positions from the symmetrically perfect case for the main rotation axis         :      0.7619335E-07
+ Distance matrix:
+ ----------------------------------------
+     DM    O      H      H  
+    O    0.000  0.960  0.960
+    H    0.960  0.000  1.568
+    H    0.960  1.568  0.000
+ refference points
+ --------------------------
+ symmetrically equivalent atoms:
+  0.78397589429324699        0.0000000000000000       0.49205639687654479     
+ -0.78397589497511477        0.0000000000000000       0.49205639639464827     
+ midpoint between the two symmetrically equivalent atoms:   0.0000000000000000        0.0000000000000000        0.0000000000000000     
+ The symmetry group is C           2 v
+              standard deviation of the atomic positions from the symmetrically perfect case for the vertical reflection plane  :      0.0000000E+00
+ CPU_TIME:   0.0000000000000000     

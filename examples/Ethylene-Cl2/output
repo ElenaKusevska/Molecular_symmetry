@@ -1,0 +1,39 @@
+ input geometry for
+ ethylene-Cl2-C2h    :
+ --------------------------------------
+ C    -4.1065830099999996       -1.0815046900000000        0.0000000000000000     
+ H    -3.5734192600000001       -2.0092096100000001        0.0000000000000000     
+ C    -3.4313087000000002       9.34726099999999976E-002   0.0000000000000000     
+ H    -3.9644724500000001        1.0211775300000001        0.0000000000000000     
+ Cl   -5.8665830100000003       -1.0815046900000000        0.0000000000000000     
+ Cl   -1.6713087000000000       9.34726099999999976E-002   0.0000000000000000     
+ info:           0 lwork1:   102.00000000000000     
+ eigenvalues of the inertia tensor:   9.9046208624097893        342.26673910430014        352.17135996670993     
+ info           0
+ eigenvectors of the inertia tensor:
+ ---------------------------------------
+ eigenvector 1: -0.95775929965077444      -0.28757107631411460       -0.0000000000000000     
+ eigenvector 2: -0.28757107631411460       0.95775929965077444        0.0000000000000000     
+ eigenvector 3:   0.0000000000000000        0.0000000000000000        1.0000000000000000     
+ the order of the main rotation axis is:           2
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ main rotation axis        :  3.12987431154258832E-008
+ Distance matrix:
+ ----------------------------------------
+     DM    C      H      C      H      Cl     Cl 
+    C    0.000  1.070  1.355  2.107  1.760  2.704
+    H    1.070  0.000  2.107  3.056  2.474  2.835
+    C    1.355  2.107  0.000  1.070  2.704  1.760
+    H    2.107  3.056  1.070  0.000  2.835  2.474
+    Cl   1.760  2.474  2.704  2.835  0.000  4.357
+    Cl   2.704  2.835  1.760  2.474  4.357  0.000
+ refference points
+ --------------------------
+ symmetrically equivalent atoms:
+  -2.0976371550000001      -0.58748865000000006        0.0000000000000000     
+   2.0976371550000001       0.58748864999999995        0.0000000000000000     
+ midpoint between the two symmetrically equivalent atoms:   0.0000000000000000        0.0000000000000000        0.0000000000000000     
+ The symmetry group of the molecule is C           2 h
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ horisontal reflection plan:   0.0000000000000000     
+ CPU_TIME:   0.0000000000000000     

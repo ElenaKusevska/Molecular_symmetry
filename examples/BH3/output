@@ -1,0 +1,39 @@
+ input geometry for
+ BH3                 :
+ --------------------------------------
+ B    -2.8526645300000002       -1.2068965300000001        0.0000000000000000     
+ H    -1.6726645300000000       -1.2068965300000001        0.0000000000000000     
+ H    -3.4426645400000000      -0.18498655999999999        0.0000000000000000     
+ H    -3.4426645400000000       -2.2288065100000001        0.0000000000000000     
+ info:           0 lwork1:   102.00000000000000     
+ eigenvalues of the inertia tensor:   2.1053088266803694        2.1053088587922062        4.2106176854725756     
+ info           0
+ eigenvectors of the inertia tensor:
+ ---------------------------------------
+ eigenvector 1: -0.98205655703910544      -0.18858663467090722       -0.0000000000000000     
+ eigenvector 2: -0.18858663467090722       0.98205655703910544        0.0000000000000000     
+ eigenvector 3:   0.0000000000000000        0.0000000000000000        1.0000000000000000     
+ the order of the main rotation axis is:           3
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ main rotation axis        :  9.05080089197068866E-008
+ Distance matrix:
+ ----------------------------------------
+     DM    B      H      H      H  
+    B    0.000  1.180  1.180  1.180
+    H    1.180  0.000  2.044  2.044
+    H    1.180  2.044  0.000  2.044
+    H    1.180  2.044  2.044  0.000
+ refference points
+ --------------------------
+ symmetrically equivalent atoms:
+   1.1800000014572789       7.28639593106095163E-010   0.0000000000000000     
+ -0.59000000854272105        1.0219099707286396        0.0000000000000000     
+ midpoint between the two symmetrically equivalent atoms:  0.29499999645727892       0.51095498572863962        0.0000000000000000     
+ the molecule has a secondary rotation axis.
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ secondary rotation axis   :  7.54559847548000179E-002
+ The symmetry group of the molecule is D           3 h
+ for the horisontal reflection plane:
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ horisontal reflection plan:   0.0000000000000000     
+ CPU_TIME:  4.00000000000000008E-003

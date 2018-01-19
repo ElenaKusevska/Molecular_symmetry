@@ -1,0 +1,39 @@
+ input geometry for
+  ammonia:
+ --------------------------------------
+ N   -0.99229288999999998        2.8901730000000000E-002   0.0000000000000000     
+ H   -0.65897099999999997      -0.91391135000000001        0.0000000000000000     
+ H   -0.65895378999999998       0.50030191000000002       0.81649673000000000     
+ H   -0.65895378999999998       0.50030191000000002      -0.81649673000000000     
+
+ info: 0            lwork1: 102.00000000000000   
+ eigenvalues of the inertia tensor:   1.6203398210206026        1.6203408863058715        2.6879999594739767     
+ info           0
+
+ eigenvectors of the inertia tensor:
+ ---------------------------------------
+ eigenvector 1:   0.0000000000000000        0.0000000000000000        1.0000000000000000     
+ eigenvector 2:  -1.2026776528948065E-005 -0.99999999992767830       -0.0000000000000000     
+ eigenvector 3: -0.99999999992767830        1.2026776528948065E-005   0.0000000000000000     
+
+ Distance matrix:
+ ----------------------------------------
+     DM    N      H      H      H  
+    N    0.000  1.000  1.000  1.000
+    H    1.000  0.000  1.633  1.633
+    H    1.000  1.633  0.000  1.633
+    H    1.000  1.633  1.633  0.000
+ the order of the main rotation axis is: 3           
+
+ average deviation of the atomic positions from the symmetrically perfect case for the
+ main rotation axis :1.0521593907242277E-007   
+ refference points
+ --------------------------
+ symmetrically equivalent atoms:
+  0.47140422998996412      -0.81649673000000000      -0.27414723444174627     
+  0.47140422998996412       0.81649673000000000      -0.27414723444174627     
+ midpoint between the two symmetrically equivalent atoms:   0.0000000000000000        0.0000000000000000        0.0000000000000000     
+ The symmetry group is C           3 v
+ average deviation of the atomic positions from the symmetrically perfect case for the
+ vertical reflection plane :1.1564995646476746   
+ CPU_TIME:   0.0000000000000000     

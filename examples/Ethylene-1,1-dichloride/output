@@ -1,0 +1,39 @@
+ input geometry for
+ ethylene-dichloride-:
+ --------------------------------------
+ C    -5.2351096400000001       0.14106583000000000        0.0000000000000000     
+ H    -4.7019458900000002      -0.78663908999999999        0.0000000000000000     
+ H    -6.3051096400000004       0.14106583000000000        0.0000000000000000     
+ C    -4.5598353300000003        1.3160431299999999        0.0000000000000000     
+ Cl   -5.4368149499999996        2.8419876700000000        0.0000000000000000     
+ Cl   -2.7998353300000001        1.3160431299999999        0.0000000000000000     
+ info:           0 lwork1:   102.00000000000000     
+ eigenvalues of the inertia tensor:   65.808365572742645        166.25584962896625        232.06421520170886     
+ info           0
+ eigenvectors of the inertia tensor:
+ ---------------------------------------
+ eigenvector 1: -0.86500290700769900       0.50176684911244385        0.0000000000000000     
+ eigenvector 2:  0.50176684911244385       0.86500290700769900        0.0000000000000000     
+ eigenvector 3:   0.0000000000000000        0.0000000000000000        1.0000000000000000     
+ the order of the main rotation axis is:           2
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ main rotation axis        :  1.42615031373685674E-007
+ Distance matrix:
+ ----------------------------------------
+     DM    C      H      H      C      Cl     Cl 
+    C    0.000  1.070  1.070  1.355  2.708  2.704
+    H    1.070  0.000  1.852  2.107  3.702  2.835
+    H    1.070  1.852  0.000  2.104  2.837  3.697
+    C    1.355  2.107  2.104  0.000  1.760  1.760
+    Cl   2.708  3.702  2.837  1.760  0.000  3.047
+    Cl   2.704  2.835  3.697  1.760  3.047  0.000
+ refference points
+ --------------------------
+ symmetrically equivalent atoms:
+  -1.5243809925592355        0.0000000000000000       0.44241823122218937     
+   1.5222824282169591        0.0000000000000000       0.44562072329079266     
+ midpoint between the two symmetrically equivalent atoms:   0.0000000000000000        0.0000000000000000        0.0000000000000000     
+ The symmetry group is C           2 v
+ standard deviation of the atomic positions from the symmetrically perfect case for the
+ vertical reflection plane :   0.0000000000000000     
+ CPU_TIME:   0.0000000000000000     

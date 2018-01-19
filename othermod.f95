@@ -1,4 +1,3 @@
-!
 !-----------------------------------------------------
 !Module containing a few other subroutines:
 !-----------------------------------------------------
@@ -69,17 +68,19 @@ end subroutine CPU
 !Print standard deviation:
 !--------------------------------
 !
-subroutine standard_dev (st, element)
+subroutine average_dev (st, element)
 implicit none
 !
 integer, parameter :: dp = SELECTED_REAL_KIND(15)
 real(dp), intent(in) ::  st
 character(len=26), intent(in) :: element
+character(len=50) :: doublechar
 !
-write(2,*) 'standard deviation of the atomic positions &
-    from the symmetrically perfect case for the'
-write(2,*) element // ':',  st
+write(doublechar,*) st
+write(2,*) 'average deviation of the atomic positions &
+    from the symmetrically perfect case for the ' // &
+    adjustl(trim(element)) // ': ' // adjustl(trim(doublechar))
 !
-end subroutine standard_dev
+end subroutine average_dev
 !
 end module other_routines

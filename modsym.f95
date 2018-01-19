@@ -1,4 +1,3 @@
-!
 !------------------------------------------------------------------
 !Module containing the subroutines for determining
 !each of the symmetry elements:
@@ -207,7 +206,7 @@ end subroutine rotoinversion
 !if they are trully identical.
 !-----------------------------------------------------------------
 !
-subroutine compare (matrix1, matrix2, n, prod, stdev)
+subroutine compare (matrix1, matrix2, n, prod, average_deviation)
 implicit none
 !
 integer, parameter :: dp = SELECTED_REAL_KIND(15)
@@ -218,13 +217,17 @@ real(dp), allocatable, dimension(:,:) :: coordinates, coordinates1
 integer, intent(in) :: n !dimension
 integer, allocatable, dimension (:) :: comparison, B, BB ! comparison array
 integer, intent(out) :: prod ! for the product for the comparison
-real, allocatable, dimension(:) :: var !variance array
-real(dp) :: variance,  numb, dist, dist1 !variance value
-real(dp), intent(out) :: stdev
-                                    ! deviation from perfect symmetry
+real, allocatable, dimension(:) :: dist !euclidian distance between points
+real(dp), intent(out) :: average_deviation ! deviation from perfect symmetry
 !
-allocate (comparison(n), B(n), BB(n), var(n))
-allocate (coordinates(3,n), coordinates1(3,n))
+allocate (comparison(n), B(n), BB(n), dist(n))
+!========================================================
+!----IMPORTANT:------------------------------------------
+allocate (coordinates(3,n), coordinates1(3,n)) 
+!coordinates arrays are probably not necessary here.
+!Either that, or do the comparison on them, rather than
+!on the matrix arrays
+!========================================================
 !
 do i = 1, 3
     do j = 1, n
@@ -243,7 +246,9 @@ end do
 !has is of the same element and has the same set of coordinates:
 !--------------------------------------------------------------------
 !
-call norm (n, coordinates)
+call norm (n, coordinates) !probably not necessary to scale.
+                             !besides, you're doing everything on the
+                             !matrix array.
 call norm (n, coordinates1)
 do i = 1, n
     do j = 1, n
@@ -256,11 +261,9 @@ do i = 1, n
                         comparison(i) = 1
                         B(j) = j
                         BB(i) = i
-        dist = sqrt( (coordinates(i,1))**(2.) + coordinates(i,2)**(2.) + &
-            coordinates(i,3)**(2.) )
-        dist1 = sqrt( (coordinates1(j,1))**(2.) + coordinates1(j,2)**(2.) &
-            + coordinates1(j,3)**(2.) )
-                    var(i) = (dist - dist1)**(2.)
+        dist(i) = sqrt( ((coordinates(1,i)) - (coordinates1(1,j)))**(2) + &
+            ((coordinates(2,i)) - (coordinates1(2,j)))**(2) + &
+            ((coordinates(3,i)) - (coordinates1(3,j)))**(2) )
                     end if
                 end if
             end if 
@@ -279,14 +282,11 @@ do i = 1, n
 end do 
 !
 if (prod == 1) then
-
-    variance = 0
-    numb = real(n) !number of atoms
+    average_deviation = 0
     do i = 1, n
-        variance = variance + var(i)
+        average_deviation = average_deviation + dist(i)
     end do
-    variance = variance / numb
-    stdev = sqrt(variance)
+    average_deviation = average_deviation/dble(n)
 end if
 !
 end subroutine compare 
